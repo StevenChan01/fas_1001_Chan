@@ -1,0 +1,22 @@
+---
+title: "TP1(FAS-1001)"
+format: pdf
+editor: visual
+author: Steven Chan Yue Fat
+Date: 22 janvier 2024
+---
+
+## Première étape
+
+![](images/Screen%20Shot%202024-01-16%20at%206.09.49%20PM.png)
+
+La première étape était d'utiliser la commande 'cd' qui permet de manipuler les dossiers. Mes dossiers se trouvent sur mon desktop et j'ai utilisé 'ls' pour vérifier le nom de mon dossier nécessaire. Ensuite j'ai tenté d'utiliser le lien SSH mais ça dit que je n'ai pas les "correct access rights". Alors, j'ai essayé le lien HTTPS ce qui a fonctionner, puis avec la commande 'git clone' j'ai pu copier les fichiers sur mon desktop.
+
+```{r}
+1 + 1
+```
+
+```{r}
+#| echo: false
+2 * 2
+```
