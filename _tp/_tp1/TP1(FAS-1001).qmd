@@ -14,12 +14,12 @@ La première étape était d'utiliser la commande 'cd' qui permet de manipuler l
 
 ## Commande git
 
-![](images/Screen Shot 2024-01-20 at 5.57.34 PM.png)
+![](images/Screen%20Shot%202024-01-20%20at%205.57.34%20PM.png)
 
 J'ai tenté de faire la commande git commit. Cependant, de ce que j'ai compris, je devais relier mon terminal à mon compte github. Ensuite, la commande git commit ne fonctionnait pas donc sur internet j'ai vu l'option que je pouvais utiliser "-m" pour ajouter un message a mon commit.
 
-## Log 
+## Log
 
-![](images/Screen Shot 2024-01-22 at 2.52.22 PM.png)
+![](images/Screen%20Shot%202024-01-22%20at%202.52.22%20PM.png)
 
 Dans se screenshot on voit l'historique des modifications faites à mon git hub. Les deux plus récentes faites par moi qui sont les commit demandé dans le tp1. Cependant, je ne suis pas trop sur pourquoi, mais si je scroll down l'historique est comme une boucle où les démarches se répète.
