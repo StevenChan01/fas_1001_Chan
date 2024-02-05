@@ -1,0 +1,92 @@
+---
+title: "TP2-FAS1001"
+format: pdf
+editor: visual
+author: Steven Chan 
+---
+
+## TP2-Le niveau de confiance des canadiens envers le gouvernement fédéral
+
+### Question de recherche
+
+Le travail tentait d'analyser le niveau de confiance des canadiens envers le gouvernement fédéral. Ainsi, l'analyse répondait à la question de recherche: Quel est le niveau de confiance des canadiens envers le gouvernement fédéral à travers différente élection? Les données utilisées provennaient du site odesi qui regroupe plusieurs banques de données canadiennes. Trois banques de données avaient été retenus pour l'analyse cependant seulement deux avaient la variable sur le niveau de confiance des canadiens. Les trois banques de données analyses les élections de 2004 à 2019. Mais encore, les années 2006 et 2015 ne comportaient pas des questions sur le niveau de confiance des canadiens envers le gouvernement. Tout de même, le niveau de confiance envers le fédéral avait été étudier lors des années 2004, 2008, 2011 et 2019. Les trois années permet d'étudier le niveau de confiance en général puisque les élections avaient été remporté par le Parti libéral en 2004 et 2019 et le Parti conservateur en 2008 et 2011.
+
+## Données et méthodologies
+
+La première banque de données couvrait les élections de 2004, 2006, 2008 et 2011. Elle avait été produit par Patrick Fournier et co. Lors des élection de 2004, les chercheurs avait utilisé les sondages téléphoniques. Pour les élections de 2006, seul la moitié des répondants du sondage précédent avait répondu. Les questions avaient été adapter à l'élection ce qui explique le changement de certaines questions. Le sondage de 2008 sondait environ 4500 voteurs. Le sondage avait été fait majoritairement au téléphone. Certains avait envoyé leur réponse par la poste.
+
+```{r}
+library(readr)
+library(tidyverse)
+library(ggplot2)
+election_Canada<- read.csv(
+  "/Users/stevenchan/Desktop/FAS1001/fas_1001_Chan/_tp/_tp2/electoral_study_Canada.csv")
+
+View(election_Canada)
+```
+
+Le sondage de 2011 utilisait le téléphone, les lettres et le web pour intéroger l'échantillon. Les auteurs divisaient le sondage en quatre partis avec différente question. La variable utilisé était le niveau de confiance des canadiens envers le gouvernement fédéral. L'élection de 2006 ne possèdaient pas de question sur le niveau de confiance ce qui expliquait la valeur manquante de 2006.
+
+Dans le nettoyage de données la fonction select prennait les variables sur le niveau de confiance des Canadiens des élections de 2004, 2008 et 2011. Ensuite, le changement de nom était possible avec la fonction rename. Le mutate ajoutait une nouvelle variable qui représentait la moyenne du niveau de confiance de chaque années. Le 'pivot longer' permet catégoriser les moyennes ensemble et les années ensemble.
+
+```{r}
+niveau <- election_Canada %>% select(
+  ces04_MBS_DH,ces08_MBS_DH,MBS11_D2h) %>% 
+  rename(
+    niv_conf_04 = ces04_MBS_DH, 
+    niv_conf_08 = ces08_MBS_DH, 
+    niv_conf_11 = MBS11_D2h)%>% mutate(
+      "2004" = mean(niv_conf_04,na.rm = TRUE),
+          "2008" = mean(niv_conf_08, na.rm =TRUE),
+          "2011" = mean(niv_conf_11, na.rm = TRUE))%>% 
+  summarise(across(starts_with("20"), ~ first(.))) %>% 
+  pivot_longer(cols = c("2004", "2008", "2011"), 
+               names_to = "années", values_to = "moyenne")
+```
+
+Patrick Fournier et d'autre chercheurs avaient aussi produit la deuxième banque de données qui analysait l'élection fédérale de 2015. Cependant, aucune variable démontrait le niveau de confiance des canadiens envers le gouvernement. La variable similaire du niveau de confiance était la niveau de satisfaction des canadiens du travail du gouvernement conservateur.
+
+Le sondage de 2019 avait été réalisé en deux vagues de questionnement. La première était pendant les élections alors que la deuxième était après les élections. Les chercheurs avaient utilisé des sondages en ligne et par téléphone. Cette recherche avait été faite par un groupe de chercheur différent.
+
+Pour toutes les banques de données, le niveau de confiance était évalué sur 4 niveau. Le niveau 4 étant "aucune confiance envers le gouvernement" et le niveau 1 étant "très confiance envers le gouvernement".
+
+```{r}
+elec_2019 <-read.csv(
+  "/Users/stevenchan/Desktop/FAS1001/fas_1001_Chan/_tp/_tp2/elec_2019.csv")
+
+View(elec_2019)
+
+```
+
+```{r}
+niveau_2019 <- elec_2019 %>% select(pes19_conf_inst1_1) %>% 
+  rename(niv_conf_19 = pes19_conf_inst1_1) %>% mutate(
+    moy19 = mean(niv_conf_19, na.rm=TRUE))%>% summarise(
+      "2019"= first(moy19)) %>% pivot_longer(
+        cols= "2019", names_to = "années", values_to = "moyenne")
+```
+
+Pour les données de 2019, une variable était nécessaire à l'analyse. La moyenne fut calculé et le pivot fut nécessaire pour pouvoir comparer les années et le moyenne ensemble.
+
+```{r}
+data_clean <- rbind(niveau, niveau_2019)
+```
+
+## Résultats
+
+Le niveau de confiance des Canadiens en moyenne n'avait pas fluctuer de beaucoup. Le niveau était rester à 2 sur une échelle de 4 ce qui signifie que les canadiens avaient confiance en le gouvernement. Le graphique démontre que plus les points qui représentaient les moyennes étaient bas plus les canadiens avaient confiance. L'analyse aurait été plus claire si les valeurs avait été recodé de façon où le niveau 1 devenait le niveau 4 et le niveau 4 devenait le niveau 1. Cependant, les moyennes changeaient et les canadiens devenait moins confiant envers leur gouvernement.
+
+Le niveau de confiance en moyenne ne changeait pas de beaucoup cependant une observation intéressant était le fait que 2019 soit plus élevé que les autres. Ce qui signifie que les Canadiens en moyenne avaient confiance en leur gouvement mais qu'il avait baissé par rapport aux années précédentes. Un changement qui pouvait être expliqué par le changement de gouvernement en 2015 et la réélection du Parti libéral minoritaire. Ainsi, une hypothèse plausible était la réélection n'avait pas fait l'unanimité ce qui explique la baisse dans la moyenne des canadiens. À l'inverse, l'hypothèse expliquait probablement le niveau de confiance de 2008 qui était le plus "élevé" par rapport aux autres. En 2006, le Parti conservateur de Stephen Harper avait été élu pour la première fois. Ensuite en 2008, le Parti conservateur avait été réélu. Ainsi, plus de canadiens étaient satisfait du travail des Conservateurs.
+
+![](Rplot.jpeg)
+
+## Bibliographie
+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| \                                                                                                                                                                                                                                                                        |
+| Patrick Fournier; Deitland Stolle; Stuart Soroka; Fred Cutler; André Blais; Joanna Everitt; Elisabeth Gidengil; Neil Nevitte, 2023, "Canadian Election Study, 2004-2011", <https://doi.org/10.5683/SP3/JSKO1T,> Borealis, V2, UNF:6:YClxWjYuyRCazsa8LoffFA== \[fileUNF\] |
+|                                                                                                                                                                                                                                                                          |
+| Patrick Fournier; Fred Cutler; Stuart Soroka; Deitland Stolle, 2023, "Canadian Election Study, 2015", <https://doi.org/10.5683/SP3/MT9Q6M>, Borealis, V2, UNF:6:QHQifNdVwds3TfXaBAAmWw== \[fileUNF\]                                                                     |
+|                                                                                                                                                                                                                                                                          |
+| Stephenson, Laura B; Harell, Allison; Rubenson, Daniel; Loewen, Peter John, 2023, "Canadian Election Study, 2019, Phone Survey", <https://doi.org/10.5683/SP3/S5YLYC,> Borealis, V2, UNF:6:pq/ku8KHlrvWRyZwHouetg== \[fileUNF\]                                          |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
