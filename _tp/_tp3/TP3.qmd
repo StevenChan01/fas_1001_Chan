@@ -1,6 +1,6 @@
 ---
 title: "TP3"
-format: html
+format: pdf
 editor: visual
 author: Steven Chan
 ---
@@ -128,6 +128,7 @@ data_object %>% ggplot(aes(x = n, y = categorie))+ geom_bar(
   labs( title = "Enjeux mentionné par le Parti conservateur du 27 au 29 mai",
     x = "Nombre de fois mentionné",
        y = "Enjeux") + 
-  theme_bw() + theme(panel.grid.major.x = element_blank())
+  theme_bw() + theme(panel.grid.major.x = element_blank(), title = element_text(size = 8),
+        axis.text = element_text(size = 8, color = "black"))
 ```
 
