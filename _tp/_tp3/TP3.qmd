@@ -90,7 +90,7 @@ data_clean <- data_conser %>%
 
 ```
 
-L'analyse du dictionnaire était possible grâce à la fonction créer plus tôt. La fonction permettait d'identifier combien de fois certains mots revenait dans les catégories prédéterminées. Ainsi, le 'pivot_longer' permettait de regrouper toutes les variables sous une variable nommée "catégorie". Ainsi,les valeurs des catégories de mots étaient regroupé sous une variable 'n'. Le 'summarise' permettait d'additionner les valeurs identiques. Dans la base de donnée, il y avait plusieurs valeurs identiques qui avait un 'n' différent, puisqu'il y avait plusieurs discours de différentes journées. Ensuite, il fallait convertir les noms des variables en français.  
+L'analyse du dictionnaire était possible grâce à la fonction créer plus tôt. La fonction permettait d'identifier combien de fois certains mots revenait dans les catégories prédéterminées. Ainsi, le 'pivot_longer' permettait de regrouper toutes les variables sous une variable nommée "catégorie". Ainsi,les valeurs des catégories de mots étaient regroupé sous une variable 'n'. Le 'summarise' permettait d'additionner les valeurs identiques. Dans la base de donnée, il y avait plusieurs valeurs identiques qui avait un 'n' différent, puisqu'il y avait plusieurs discours de différentes journées. Ensuite, il fallait convertir les noms des variables en français.
 
 ```{r}
 data_object <- run_dictionary(data       = data_clean, 
@@ -118,7 +118,7 @@ data_object <- run_dictionary(data       = data_clean,
 
 ## Résultats
 
-La question de recherche analysait les discours des députés conservateurs lors des assemblées du 27 au 29 mai 2019. L'analyse du dictionnaire démontrait que les conservateurs abordait le plus l'assurance maladie. Ensuite le droit civil, l'économie puis la religion. Les trois premier sujets n'étaient pas aussi surprenant puisque ses sujets représentaient des enjeux majeurs au Canada. Cependant la religion ressortait comme un sujet suprenant puisque la religion n'occupait tant de place dans la mise à l'agenda gouvernementale. L'assurance maladie se démarquait parmi les autres, un sujet qui pouvait être d'enjeu primordiale du 27 au 29 mai 2019. L'éducation représentait une surprise par rapport au bas nombre de mots utilisé à ce sujet.Les Conservateurs avaient mentionné peu de mots en lien avec l'éducation. Un résultat qui pouvait être expliqué par la séparation des compétences où l'éducation est une compétence provinciale. 
+La question de recherche analysait les discours des députés conservateurs lors des assemblées du 27 au 29 mai 2019. L'analyse du dictionnaire démontrait que les conservateurs abordait le plus l'assurance maladie. Ensuite le droit civil, l'économie puis la religion. Les trois premier sujets n'étaient pas aussi surprenant puisque ses sujets représentaient des enjeux majeurs au Canada. Cependant la religion ressortait comme un sujet suprenant puisque la religion n'occupait tant de place dans la mise à l'agenda gouvernementale. L'assurance maladie se démarquait parmi les autres, un sujet qui pouvait être d'enjeu primordiale du 27 au 29 mai 2019. L'éducation représentait une surprise par rapport au bas nombre de mots utilisé à ce sujet.Les Conservateurs avaient mentionné peu de mots en lien avec l'éducation. Un résultat qui pouvait être expliqué par la séparation des compétences où l'éducation est une compétence provinciale.
 
 ```{r}
 
@@ -132,3 +132,6 @@ data_object %>% ggplot(aes(x = n, y = categorie))+ geom_bar(
         axis.text = element_text(size = 8, color = "black"))
 ```
 
+## Bibliographie
+
+Decore, J. (1951, February 27). "Trans-Canada Pipe Lines Limited." Canada. Parliament. House of Commons. Edited Hansard. 21st Parliament, 4th session. Retrieved from LiPaD: The Linked Parliamentary Data Project website: https://www.lipad.ca/full/permalink/1624106/
