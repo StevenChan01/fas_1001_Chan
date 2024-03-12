@@ -1,0 +1,204 @@
+---
+title: "Travail_mi-session"
+format: pdf
+editor: visual
+author: Steven Chan
+---
+
+```{r setup, include=FALSE}
+
+library(quanteda)
+library(tidyverse)
+library(fs)
+library(crayon)
+library(ggplot2)
+library(readr)
+
+
+lexicoder <- dictionary(file = "policy_agendas_english.lcd",
+                        format = "yoshikoder")
+
+
+run_dictionary <- function(data, text, dictionary) {
+  tictoc::tic()
+  if ( is.data.frame(data) != "TRUE") {
+    stop(crayon::yellow('the argument "data" needs to be a dataframe'))
+  }
+  data <- data %>% dplyr::mutate(text = {{text}})
+  if ( is.character(data$text) != "TRUE") {
+    stop(crayon::yellow('The variable "text" needs to be a character vector'))
+  }
+  corpus <- quanteda::tokens(data$text)
+  if ( quanteda::is.dictionary(dictionary) != "TRUE") {
+    stop(crayon::yellow('Your "dictionary" needs to be in a dictionary format\n For more information:" https://quanteda.io/reference/dictionary.html'))
+  }
+  dfm    <- quanteda::dfm(quanteda::tokens_lookup(corpus, dictionary, nested_scope = "dictionary"))
+  message(crayon::green("100% expressions/words found"))
+  dataFinal   <- quanteda::convert(dfm, to = "data.frame")
+  tictoc::toc()
+  return(dataFinal)
+}
+
+# importation de data
+
+X2019_4_1 <- read_csv("2019/4/2019-4-1.csv")
+
+X2019_4_2 <- read_csv("2019/4/2019-4-2.csv")
+
+X2019_4_3 <- read_csv("2019/4/2019-4-3.csv")
+
+X2019_4_4 <- read_csv("2019/4/2019-4-5.csv")
+
+X2019_4_5 <- read_csv("2019/4/2019-4-5.csv")
+
+X2019_4_8 <- read_csv("2019/4/2019-4-8.csv")
+
+X2019_4_9 <- read_csv("2019/4/2019-4-9.csv")
+
+data_04_1 <- X2019_4_1 %>% filter (speakerparty == "Conservative")
+
+data_04_02 <- X2019_4_2 %>%  filter (speakerparty == "Conservative")
+
+data_04_03 <-  X2019_4_3 %>%  filter ( speakerparty == "Conservative")
+
+data_04_04 <-  X2019_4_4 %>%  filter(str_detect(speakerparty, "Conservative"))
+
+data_04_05 <-  X2019_4_5 %>%  filter (speakerparty == "Conservative")
+
+data_04_08 <-  X2019_4_8 %>%  filter(speakerparty == "Conservative")
+
+data_04_09 <-  X2019_4_9 %>%  filter(speakerparty == "Conservative")
+
+data <-  bind_rows(data_04_1, data_04_02, data_04_03, data_04_04, data_04_05,
+                   data_04_08, data_04_09)
+
+
+data1 <-  data %>% filter(speakername == "Pierre Poilievre"| 
+                              speakername == "Erin O'Toole"| 
+                              speakername == "Candice Bergen"|
+                              speakername == "Andrew Scheer")
+
+data_clean <- data1%>% select(speakername, speechtext, speakerparty)
+```
+
+## Introduction
+
+À travers les années, le système parlementaire du Canada reposait sur un système de bipartisme. Le pouvoir de gouverner le Canada était souvent disputé entre le Parti conservateur et le Parti libéral. Ces dernières années, le Parti libéral avait le dessus sur les conservateurs. Cependant, selon les sondages récents, les Canadiens favorisaient de plus en plus les conservateurs. Les Libéraux semblaient perdre plusieurs votes à Vancouver et à Toronto (Yun, Tom CTV news, 8 février 2024). Ainsi, l'article analysait le Parti conservateur du Canada et leur chef Pierre Poilievre. La recherche cherchait si : Les paroles du Parti conservateur du Canada s'identifiaient-ils aux partis conservateurs traditionnels? Avec les données parlementaires du Canada, la recherche utilisait les discours des conservateurs en 2019. Les acteurs principaux utilisés étaient: Andrew Scheer, Erin O'Toole, Candice Bergen et Pierre Poilievre. Les quatre candidats avaient été retenus puisqu'ils étaient les quatre derniers chefs du Parti conservateur. Ainsi, la recherche tentait de comparer les paroles du Parti conservateur du Canada avec les caractéristiques typiques des partis conservateurs décrits par des articles scientifiques.
+
+## Données et méthodes
+
+Les données utilisées pour la recherche provenaient du site LIPAD. Un site du gouvernement du Canada qui publie des données textuelles des assemblées fédérales. Les données les plus récentes datent de 2019. Chaque année contient des données de tous les mois de l'année. Pour ce travail préliminaire, le mois d'avril avait été retenu. Les données permettaient d'analyser tous les politiciens qui avaient pris la parole lors de l'assemblée. Ainsi, seuls les conservateurs avaient été retenus.
+
+## Le Parti conservateur
+
+Le Parti conservateur du Canada avait connu plusieurs défaites face au Parti libéral, depuis les années de Stephen Harper, les conservateurs ne trouvaient pas les moyens d'accéder au pouvoir. En conséquence, le Parti avait changé de chefs cinq fois jusqu'à ce jour. Le graphique démontrait les quatre chefs qui avaient précédé Stephen Harper et Rona Ambrose et le nombre de fois qu'ils avaient exercé leur droit de parole lors des assemblées du mois d'avril en 2019. On voit une différence importante entre Pierre Poilievre et les autres. Le nombre pouvait varier entre les mois donc une analyse des autres mois sera faite lors de du travail de session.
+
+```{r, echo = FALSE}
+nb_parole <- data1%>% count(speakername)
+
+parole_graph <- nb_parole %>% ggplot(aes(x = reorder(
+  speakername, - n), y = n)) + geom_bar(stat = "identity") + 
+labs(title = "Nombre de fois qu'un politicien parle", 
+     x = "Politiciens", 
+     y = element_blank()) + theme_bw()
+
+ parole_graph  
+```
+
+## Résultat préliminaire
+
+Les résultats préliminaires proviennent du début du mois d'avril 2019, une recherche sur les autres mois sera faite. Ainsi, une analyse du dictionnaire avait été faite sur les données textuelles des quatre politiciens conservateurs. Les mots étaient regroupés dans plusieurs catégories d'enjeux, dont l'économie, le droit civil et la transportation. Toutes des catégories d'enjeux importants au fédéral.
+
+```{r, include= FALSE}
+# nettoyage
+
+data_dic <- data1%>% 
+  select(speechtext, speakerparty) %>% 
+  mutate(speechtext = tolower(speechtext)) %>%
+  na.omit()
+
+#dictionnaire
+
+data_object <- run_dictionary(data       = data_dic, 
+                              text       = speechtext, 
+                              dictionary = lexicoder) |> 
+  bind_cols(data_dic) |> select(-c(doc_id,speechtext)) %>% 
+  pivot_longer(!speakerparty, names_to = "categorie", values_to="n") |> 
+  ungroup() %>%  group_by(speakerparty,categorie) %>% summarise(n=sum(n)) %>%  mutate(
+  categorie = case_when(categorie == "macroeconomics" ~ "Économie",
+                        categorie == "crime" ~ "Crime",
+                        categorie == "healthcare" ~ "Assurance maladie",
+                          categorie == "transportation" ~ "Transportation",
+                          categorie == "social_welfare" ~ "Sécurité sociale",
+                          categorie == "religion" ~ "Religion",
+                          categorie == "land-water-management" ~ "Contrôle des terres et eaux",
+                          categorie == "labour" ~ "Emplois",
+                          categorie == "foreign_trade" ~ "Exportation",
+                          categorie == "environment" ~ "Environement",
+                          categorie == "education" ~ "Éducation",
+                          categorie == "civil_rights" ~ "Droit civil",
+                          T ~ as.character(categorie)))%>%  na.omit()   
+  
+data_sup <- data_object %>% filter(n > 100)
+
+data_moy <- data_object %>% filter(n < 100, n > 15)
+
+data_inf <- data_object %>% filter(n < 15)
+
+```
+
+En premier lieu, le Parti conservateur mentionnait souvent trois catégories d'enjeux: les finances, l'économie et les crimes. Les trois catégories se démarquaient largement par rapport aux autres. Les catégories de crimes et de l'économie furent les plus mentionnées par les conservateurs avec une fréquence de plus de 400 fois. Le nombre élevé des mots reliés à ces catégories pouvait potentiellement être causé par les enjeux qui touchaient le Canada lors de cette période de temps. Les finances arrivaient en troisième avec une fréquence de 121.
+
+```{r, echo=FALSE}
+data_sup %>% ggplot(aes(x = n, y = categorie))+ geom_bar(
+  stat= "identity", position = "dodge", na.rm = TRUE) + 
+  labs( title = "Enjeux mentionné par le Parti conservateur",
+        x = "Nombre de fois mentionné",
+        y = "Enjeux") + 
+  theme_bw() + theme(panel.grid.major.x = element_blank(), title = element_text(size = 8),
+                     axis.text = element_text(size = 8, color = "black"))
+
+```
+
+Ci-dessous montrent les autres enjeux après les trois catégories les plus fréquentes. La transportation revenait le plus avec 63 mentions. Une différence significative avec les autres sur le graphique plus haut. Ainsi, ses enjeux revenaient assez constamment, mais n'étaient pas aussi significatifs.
+
+```{r, echo=FALSE}
+
+data_moy %>% ggplot(aes(x = n, y = categorie))+ geom_bar(
+  stat= "identity", position = "dodge", na.rm = TRUE) + 
+  labs( title = "Enjeux mentionné par le Parti conservateur",
+        x = "Nombre de fois mentionné",
+        y = "Enjeux") + 
+theme_bw() + theme(panel.grid.major.x = element_blank(), 
+                  title = element_text(size = 8),
+    axis.text = element_text(size = 8, color = "black"))
+
+
+```
+
+\newpage
+
+Les enjeux les plus importants pouvaient décrire les caractéristiques d'un parti tout comme les enjeux les moins traités pouvaient en dire autant. Le graphique ci-dessous décrit les enjeux les moins discutés par le Parti conservateur lors du début du mois d'avril 2019. Les enjeux avaient été mentionnés moins de 15 fois lors des sept jours analysés. Un résultat surprenant était le peu de fois que l'immigration avait été mentionnée. Le sujet pouvait ne pas être d'actualité en début d'avril, mais tout de même surprenant comme résultat préliminaire.
+
+```{r, echo = FALSE}
+
+data_inf %>% ggplot(aes(x = n, y = categorie))+ geom_bar(
+  stat= "identity", position = "dodge", na.rm = TRUE) + 
+  labs( title = "Enjeux mentionné par le Parti conservateur",
+        x = "Nombre de fois mentionné",
+        y = "Enjeux") + 
+  theme_bw() + theme(panel.grid.major.x = element_blank(), title = element_text(size = 8),
+                     axis.text = element_text(size = 8, color = "black"))
+```
+
+## Conclusion
+
+Pour conclure, la recherche tentait de comparer les caractéristiques d'un parti conservateur traditionnel à celui du Parti conservateur du Canada. La recherche utilisait les données textuelles du parlement fédéral pour faire une analyse de dictionnaire des différents enjeux. Ainsi, l'analyse permettait de ressortir les enjeux importants discutés par les conservateurs canadiens. Les résultats préliminaires du mois d'avril 2019 démontraient une différence significative face à la fréquence des enjeux qui avaient été discutés.
+
+\newpage
+
+## Bibliographie
+
+Decore, J. (1951, February 27). "Trans-Canada Pipe Lines Limited." Canada. Parliament. House of Commons. Edited Hansard. 21st Parliament, 4th session. Retrieved from LiPaD: The Linked Parliamentary Data Project website: https://www.lipad.ca/full/permalink/1624106/
+
+Tom Yun, "Liberals at risk of big losses in Vancouver, Toronto, Nanos projections show", CTV News, February 8, 2024
