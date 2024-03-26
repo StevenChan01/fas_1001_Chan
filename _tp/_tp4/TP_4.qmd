@@ -1,0 +1,95 @@
+---
+title: "TP_4"
+format: pdf
+editor: visual
+author: Steven Chan
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(rvest)
+library(lubridate)
+```
+
+```{r}
+URL <- "https://en.wikipedia.org/wiki/Statistics_of_the_COVID-19_pandemic_in_the_United_States#covid-19-pandemic-in-united-states-by-location"
+
+page <- URL |> 
+read_html()
+
+covid <- page |>  html_node("table.wikitable") |> html_table()
+```
+
+## Introduction
+
+La Covid-19 avait mis le monde sur pause, le temps semblait s'être arrêté pour contrer le virus contagieux. Plusieurs pays et provinces adoptait des restrictions qui limiterait le contact physique entre humains. Ses restrictions changeaient de pays à l'autre. Les États-Unis avait délègué les responsabilités aux gouverneurs d'État. Cependant, les américains étaient les plus infectés dans le monde. Ils détenaient le plus de cas au total de Covid dans le monde. Ainsi, la recherche tentait de répondre à la question de recherche: Le nombre de restrictions expliquaient-ils le nombre d'infection? L'effet des restrictions des contacts physiques était un enjeu important puisque des vies avaient été perdu et des vies avaient été changé. La limite des restrictions divisait les américains, l'imposition de restrictions dans la vie quotidienne devenait problématique. Donc quatre ans plus tard, l'analyse des restrictions et de leur effet était pertinent.
+
+## Données
+
+Les données avaient été pris du site de wikipedia, les données comtabilisaient 56 États américains. Ainsi, Wikipedia avait pris ses données des sites internet de chaque État qui rendait public leurs chiffres. Les données recensé démontraient cinq variables : la localisation, le nombre d'infection, le nombre de décès, le nombre de guérison et le nombre d'hospitalisation. La page Wikipedia utilisé avait été choisis puisqu'elle contenait le recensement des données de chaque État avec les références des données. Chaque référence provenait des sites officiels des États ce qui rendait les données crédibles. Le site de Wikipedia permet de récolter les données une seule fois. De plus, l'analyse utilisait plusieurs articles qui classe les États américains par rapport à leur niveau de restrictions imposé par les États. Leurs recherches permettait de comparer les aux données récolté sur le site de Wikipedia.
+
+```{r, echo = FALSE}
+
+covid <- covid |> select("Location[i]","Cases[ii]","Deaths[iii]") |> 
+  rename(Etat ="Location[i]",
+  Cas = "Cases[ii]",
+  Mort = "Deaths[iii]") 
+
+
+covid <- covid[-c(1,58,59), ]
+      
+
+covid_clean <- covid |> 
+  mutate(across(c(Cas, Mort), ~ str_replace_all(
+    ., "[[:punct:]vi[:punct:]vii[:punct:]viii]", "")),Etat = 
+      str_replace_all(Etat, "\\[v[ivx]+\\]", ""))
+
+
+covid_num <- covid_clean |> mutate(Cas = as.numeric(Cas))
+
+glimpse(covid_num)
+
+covid_sup <- covid_num |> filter(Cas > 3000000)
+
+covid_inf <- covid_num |> filter(Cas < 900000)
+```
+
+\newpage
+
+## Résultats
+
+Dans les articles sur les États les plus préventif face à la covid-19, les palmarès plaçaient ses États suivant: Rhode Island, Vermont, New York, Connecticut et le New Jersey. Ainsi, ses États représentaient les États les plus préventif face à la covid-19. Contrairement, les États les moins préventif étaient: Wyoming, Arizona, Texas, Alabama et la Floride.
+
+```{r, echo = FALSE}
+covid_sup |> ggplot(aes(x = Etat, y = Cas)) + 
+  geom_bar(stat = "identity") + 
+  coord_flip() +
+  labs(title = "Les État les plus infectés", 
+       x = "États", y= "Le nombre d'infection")
+```
+
+Les données de Wikipedia démontrait la Californie comme étant l'État le plus touché par la covid-19. Toutes les États avec plus de 3 millions de cas de covid étaient des États qui habitaient beaucoup de personne. Une raison plausible du grand nombre d'infections. Cependant, parmi ses grands États, le Texas et la Floride étaient des les plus affecté après la Californie. Selon les articles de références, les gouvernements respectifs avaient décidé de limiter les restrictions. Mais encore, l'État de New York et du New Jersey figuraient parmi les gourvernements les plus préventifs, mais se retrouve tout de même avec beaucoup de cas de Covid.
+
+```{r, echo = FALSE}
+covid_inf |> ggplot(aes(x = Etat, y = Cas)) + 
+  geom_bar(stat = "identity") + 
+  coord_flip() + labs(
+    title = "Les États les moins infectés", x = "États", 
+                      y = "le nombre d'infection")
+```
+
+En ce qui attrait les États avec le moins de cas de Covid, le Wyoming, le Dakota du Sud et Hawaii s'y retrouvaient. malgré le fait qu'ils avaient peu de restrictions. Encore une fois, une raison plausible était dû au nombre d'habitant.
+
+## Conclusion
+
+En conclusion, le nombre d'infection dans un État américain ne pouvait être seulement justifié par le nombre de restrictions imposé par le gouvernement. En majorité, les États les plus infecté habitaient une grande population comme New York et New Jersey. Certain États avaient peu d'infection et des mesures restrictives cependant, ils n'étaient pas assez nombreux pour conclure l'efficacité des restrictions. De plus, plusieurs États dont les gouvernements avaient peu restraint la population, se retrouvaient parmi les États les moins touché par le virus. Une réalité qui s'appliquaient aux États comme Hawaii, le Wyoming et le Dakota du Sud. Une explication plausible étaient le nombre de population qui habitait celle-ci.
+
+De plus, les données de wikipedia étaient offerte à tous, les données ne proviennaient pas de leur propre recherche mais des sites officiels des États américains. Ainsi, rendait le "scraping" éthique. Un "scraping" non éthique serait si les authors mentionnaient leurs désacoord avec la reproduction de leur données. Les authors avaient des droits qui devaient être respecté puisque ses données étaient le résultat de leur recherche. Dans le cas de la recherche ci-présente, les données étaient des statistiques de la santé de la population lors d'une pandémie qui affectait le monde entier. Ainsi, les statistiques étaient public pour informer les citoyens mais aussi les médias.
+
+\newpage
+
+## Bibliographie
+
+Casey Leins, march 17, 2020. "10 States With the Most Aggressive Response to COVID-19", US news and world report.
+
+Wikipedia contributors, "Statistics of the COVID-19 pandemic in the United States," Wikipedia, The Free Encyclopedia, https://en.wikipedia.org/w/index.php?title=Statistics_of_the_COVID-19_pandemic_in_the_United_States&oldid=1207023129 (accessed March 26, 2024).
